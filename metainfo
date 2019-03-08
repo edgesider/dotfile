@@ -1,0 +1,84 @@
+{
+    "files": [
+        {
+            "dst": "out/_vimrc",
+            "src": "~/.vimrc",
+            "src_expanded": "/home/kai/.vimrc",
+            "src_mode": 33188,
+            "src_own": "kai",
+            "src_grp": "kai"
+        },
+        {
+            "dst": "out/_tmux.conf",
+            "src": "~/.tmux.conf",
+            "src_expanded": "/home/kai/.tmux.conf",
+            "src_mode": 33188,
+            "src_own": "kai",
+            "src_grp": "kai"
+        },
+        {
+            "dst": "out/plasma-workspace",
+            "src": "~/.config/plasma-workspace/",
+            "src_expanded": "/home/kai/.config/plasma-workspace",
+            "src_mode": 16877,
+            "src_own": "kai",
+            "src_grp": "kai"
+        },
+        {
+            "dst": "out/aria2.conf",
+            "src": "~/.aria2/aria2.conf",
+            "src_expanded": "/home/kai/.aria2/aria2.conf",
+            "src_mode": 33152,
+            "src_own": "kai",
+            "src_grp": "kai"
+        },
+        {
+            "dst": "out/_Xmodmap",
+            "src": "~/.Xmodmap",
+            "src_expanded": "/home/kai/.Xmodmap",
+            "src_mode": 33188,
+            "src_own": "kai",
+            "src_grp": "kai"
+        },
+        {
+            "dst": "out/_xprofile",
+            "src": "~/.xprofile",
+            "src_expanded": "/home/kai/.xprofile",
+            "src_mode": 33188,
+            "src_own": "kai",
+            "src_grp": "kai"
+        },
+        {
+            "dst": "out/i3_config",
+            "src": "~/.config/i3/config",
+            "src_expanded": "/home/kai/.config/i3/config",
+            "src_mode": 33188,
+            "src_own": "kai",
+            "src_grp": "kai"
+        },
+        {
+            "dst": "out/myrc.tint2rc",
+            "src": "~/.config/tint2/myrc.tint2rc",
+            "src_expanded": "/home/kai/.config/tint2/myrc.tint2rc",
+            "src_mode": 33188,
+            "src_own": "kai",
+            "src_grp": "kai"
+        },
+        {
+            "dst": "out/config.fish",
+            "src": "~/.config/fish/config.fish",
+            "src_expanded": "/home/kai/.config/fish/config.fish",
+            "src_mode": 33188,
+            "src_own": "kai",
+            "src_grp": "kai"
+        },
+        {
+            "dst": "out/lightdm-gtk-greeter.conf",
+            "src": "/etc/lightdm/lightdm-gtk-greeter.conf",
+            "src_expanded": "/etc/lightdm/lightdm-gtk-greeter.conf",
+            "src_mode": 33188,
+            "src_own": "root",
+            "src_grp": "root"
+        }
+    ]
+}

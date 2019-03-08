@@ -1,0 +1,157 @@
+# i3 config file (v4)
+set $mod Mod3
+floating_modifier Mod1
+font xft:Noto Sans Mono 11
+focus_follows_mouse no
+
+# default_border pixel 6
+
+set $ws1 "1:Main"
+set $ws2 "2:Main2"
+set $ws3 "3:Chromium"
+set $ws4 "4:Music"
+set $ws5 "5:Read"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+
+# switch to workspace
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws10
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5
+bindsym $mod+Shift+6 move container to workspace $ws6
+bindsym $mod+Shift+7 move container to workspace $ws7
+bindsym $mod+Shift+8 move container to workspace $ws8
+bindsym $mod+Shift+9 move container to workspace $ws9
+bindsym $mod+Shift+0 move container to workspace $ws10
+
+# change focus
+bindsym $mod+j focus left
+bindsym $mod+k focus down
+bindsym $mod+l focus up
+bindsym $mod+semicolon focus right
+
+# move focused window
+bindsym $mod+Shift+j move left
+bindsym $mod+Shift+k move down
+bindsym $mod+Shift+l move up
+bindsym $mod+Shift+semicolon move right
+
+# split in horizontal/vertical orientation
+bindsym $mod+h split h
+bindsym $mod+v split v
+
+# fullscreen
+bindsym $mod+f fullscreen toggle
+
+# change container layout (stacked, tabbed, toggle split)
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+# change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# focus the parent/child container
+bindsym $mod+p focus parent
+bindsym $mod+c focus child
+
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+r restart
+# bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+bindsym $mod+Shift+e exec --no-startup-id "nag_dialog --text 'Do you really want to exit i3?' --yes-cmd 'exit_i3'"
+
+mode "resize" {
+    bindsym j resize shrink width 10 px or 10 ppt
+    bindsym k resize grow height 10 px or 10 ppt
+    bindsym l resize shrink height 10 px or 10 ppt
+    bindsym semicolon resize grow width 10 px or 10 ppt
+
+    bindsym Left resize shrink width 10 px or 10 ppt
+    bindsym Down resize grow height 10 px or 10 ppt
+    bindsym Up resize shrink height 10 px or 10 ppt
+    bindsym Right resize grow width 10 px or 10 ppt
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+    bindsym $mod+r mode "default"
+}
+bindsym $mod+r mode "resize"
+
+exec --no-startup-id tint2
+#exec --no-startup-id xfce4-panel --disable-wm-check
+# bar {
+#     font xft:Droid Sans Mono for Powerline, awesome 14
+#     status_command i3blocks
+#     # status_command i3pystatus
+#     strip_workspace_numbers yes
+#     separator_symbol "෦"
+# }
+
+bindsym $mod+Return exec --no-startup-id konsole
+#bindsym Mod1+Return exec --no-startup-id konsole
+bindsym $mod+Shift+q kill
+bindsym Mod1+F4 kill
+
+# Rofi
+bindsym Mod1+space exec --no-startup-id "rofi -modi run,window,drun,combi -combi-modi window,drun,run -show combi"
+bindsym $mod+d exec --no-startup-id "rofi -modi run,window,drun,combi -combi-modi window,drun,run -show combi"
+
+# 显示器切换
+bindsym Mod4+p exec --no-startup-id lxrandr
+
+# 音量控制
+bindsym Mod4+equal exec --no-startup-id amixer set Master 5%+
+bindsym Mod4+minus exec --no-startup-id amixer set Master 5%-
+bindsym Mod4+m exec --no-startup-id amixer set Master toggle
+
+bindsym Ctrl+Mod1+x exec --no-startup-id deepin-screenshot
+
+# 切换壁纸
+bindsym $mod+Shift+n exec --no-startup-id kill -s 10 `cat /tmp/autofeh.pid`
+
+# lock
+# bindsym Mod3+l exec --no-startup-id i3lock
+bindsym Mod4+l exec --no-startup-id dm-tool switch-to-greeter
+
+# assign
+assign [class="Chromium"] → 3:Chromium
+assign [class="Zathura"] → 5:Read
+assign [class="netease-cloud-music"] → 4:Music
+
+# for_window
+for_window [class="Lxrandr"] border pixel 10
+for_window [class="Chromium"] border pixel 0
+for_window [class="konsole"] border pixel 5
+for_window [title="JetBrains Toolbox"] floating enable
+for_window [title="JetBrains Toolbox"] border pixel 5
+for_window [window_role="GtkFileChooserDialog"] border pixel 10
+
+# autostart
+# exec --no-startup-id compton
+exec --no-startup-id ~/.local/bin/autofeh
+exec --no-startup-id xfce4-power-manager
+exec --no-startup-id nm-applet
+exec --no-startup-id fcitx
+exec --no-startup-id dunst
+exec --no-startup-id xmodmap ~/.Xmodmap
+#exec --no-startup-id volumeicon
+exec --no-startup-id nutstore
