@@ -3,7 +3,7 @@
 A script to manage backup of dotfile.
 Usage:
     1. Run `./backup.py genempty` to generate a empty backup_list file. Then 
-    add the files need to be backuped.
+    add the files need to be backuped to it.
     2. Run `./backup.py backup` to backup.
     3. Run `./backup.py restore` to restore. restore action will attemp to 
     restore permission bits, ownner, group and other metainfo, so it may
@@ -23,39 +23,47 @@ from collections import namedtuple
 
 '''
 backup backup -m 777 -u kai -g kai -l backup.list -i metainfo -d dir
-backup restore -i metainfo --absdir
+backup restore -i metainfo
 
 File Format:
 `backup.list`. List of files will to be backuped.
 [
     ['src_file_path', ''],
-    ['src_file_path', 'empty_or_new_name']
+    ['src_file_path', 'empty_or_alias']
 ]
 
 `metainfo`. Metainfo file written by `backup` action, which store files' stat and location info.
 {
     "files": [
         {
+            "dst": "backuped file",
             "src": "file source",
+            "src_is_dir": true,
+            "src_dir_stat": [
+                {
+                    "name": "filename",
+                    "mode": 744,
+                    "own": "kai",
+                    "grp": "kai"
+                },
+                {
+                    "name": "filename",
+                    "mode": 744,
+                    "own": "kai",
+                    "grp": "kai"
+                }
+            ],
             "src_expanded": "file expanded"
             "src_mode": 744,
             "src_own": "kai",
-            "src_grp": "kai",
-            "dst": "backuped file",
-        },
-        {
-            "src": "file source",
-            "src_expanded": "file expanded"
-            "src_mode": 444,
-            "src_own": "root",
-            "src_grp": "root",
-            "dst": "backuped file",
+            "src_grp": "kai"
         }
     ]
 }
 '''
 
-Metainfo = namedtuple('BackupFile', ('dst', 'src', 'src_expanded', 'src_mode', 'src_own', 'src_grp'))
+Metainfo = namedtuple('Metainfo', ('dst', 'src', 'src_expanded', 'src_is_dir', 'src_dir_stat', 'src_mode', 'src_own', 'src_grp'))
+Filestat = namedtuple('Filestat', ('name', 'mode', 'own', 'grp'))
 
 def read_backup_list(filepath):
     '''Read backup list'''
@@ -66,14 +74,28 @@ def read_metainfo(filepath):
     '''Read metainfo file of backuped files'''
     with open(filepath) as f:
         d = json.load(f)
-        return [Metainfo(**meta) for meta in d['files']]
+        metalist = [Metainfo(**meta) for meta in d['files']]
+    rv = []
+    for meta in metalist:
+        if meta.src_is_dir:
+            subfiles_stat = [Filestat(**stat) for stat in meta.src_dir_stat]
+            # _replace() function will generate and return a new namedtulpe object, so we should build a new list.
+            rv.append(meta._replace(src_dir_stat=subfiles_stat))
+        elif meta.src_dir_stat is not None:
+            rv.append(meta._replace(src_dir_stat=None))
+    return rv
+
+def meta_to_dict(metainfo: Metainfo):
+    rv = metainfo._asdict()
+    if rv['src_dir_stat']:
+        rv['src_dir_stat'] = [submeta._asdict() for submeta in rv['src_dir_stat']]
+    return rv
 
 def write_metainfo(metalist, outfile):
     '''Rrite metainfo file of `metalist` to `outfile`'''
-    metalist = [meta._asdict() for meta in metalist]
+    metalist = [meta_to_dict(meta) for meta in metalist]
     with open(outfile, 'w') as f:
         json.dump({'files': metalist}, f, indent=4, ensure_ascii=False)
-
 
 def remove_dir_file(dirorfile):
     '''Remove dir or file'''
