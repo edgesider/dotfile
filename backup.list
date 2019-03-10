@@ -3,10 +3,10 @@
 ["~/.tmux.conf", ""],
 ["~/.config/plasma-workspace/", ""],
 ["~/.aria2/aria2.conf", ""],
-["~/.Xmodmap", ""],
-["~/.xprofile", ""],
-["~/.config/i3/config", "i3_config"],
+["~/.Xmodmap", "X/"],
+["~/.xprofile", "X/"],
+["~/.config/i3/config", "i3/config"],
 ["~/.config/tint2/myrc.tint2rc", ""],
-["~/.config/fish/config.fish", ""],
+["~/.config/fish/", ""],
 ["/etc/lightdm/lightdm-gtk-greeter.conf", ""]
 ]

@@ -4,6 +4,8 @@
             "dst": "out/_vimrc",
             "src": "~/.vimrc",
             "src_expanded": "/home/kai/.vimrc",
+            "src_is_dir": false,
+            "src_dir_stat": null,
             "src_mode": 33188,
             "src_own": "kai",
             "src_grp": "kai"
@@ -12,6 +14,8 @@
             "dst": "out/_tmux.conf",
             "src": "~/.tmux.conf",
             "src_expanded": "/home/kai/.tmux.conf",
+            "src_is_dir": false,
+            "src_dir_stat": null,
             "src_mode": 33188,
             "src_own": "kai",
             "src_grp": "kai"
@@ -20,6 +24,33 @@
             "dst": "out/plasma-workspace",
             "src": "~/.config/plasma-workspace/",
             "src_expanded": "/home/kai/.config/plasma-workspace",
+            "src_is_dir": true,
+            "src_dir_stat": [
+                {
+                    "name": "/home/kai/.config/plasma-workspace/shutdown",
+                    "mode": 16877,
+                    "own": "root",
+                    "grp": "root"
+                },
+                {
+                    "name": "/home/kai/.config/plasma-workspace/env",
+                    "mode": 16877,
+                    "own": "root",
+                    "grp": "root"
+                },
+                {
+                    "name": "/home/kai/.config/plasma-workspace/env/env.sh",
+                    "mode": 33188,
+                    "own": "root",
+                    "grp": "root"
+                },
+                {
+                    "name": "/home/kai/.config/plasma-workspace/env/path.sh",
+                    "mode": 33188,
+                    "own": "root",
+                    "grp": "root"
+                }
+            ],
             "src_mode": 16877,
             "src_own": "kai",
             "src_grp": "kai"
@@ -28,30 +59,38 @@
             "dst": "out/aria2.conf",
             "src": "~/.aria2/aria2.conf",
             "src_expanded": "/home/kai/.aria2/aria2.conf",
+            "src_is_dir": false,
+            "src_dir_stat": null,
             "src_mode": 33152,
             "src_own": "kai",
             "src_grp": "kai"
         },
         {
-            "dst": "out/_Xmodmap",
+            "dst": "out/X/_Xmodmap",
             "src": "~/.Xmodmap",
             "src_expanded": "/home/kai/.Xmodmap",
+            "src_is_dir": false,
+            "src_dir_stat": null,
             "src_mode": 33188,
             "src_own": "kai",
             "src_grp": "kai"
         },
         {
-            "dst": "out/_xprofile",
+            "dst": "out/X/_xprofile",
             "src": "~/.xprofile",
             "src_expanded": "/home/kai/.xprofile",
+            "src_is_dir": false,
+            "src_dir_stat": null,
             "src_mode": 33188,
             "src_own": "kai",
             "src_grp": "kai"
         },
         {
-            "dst": "out/i3_config",
+            "dst": "out/i3/config",
             "src": "~/.config/i3/config",
             "src_expanded": "/home/kai/.config/i3/config",
+            "src_is_dir": false,
+            "src_dir_stat": null,
             "src_mode": 33188,
             "src_own": "kai",
             "src_grp": "kai"
@@ -60,15 +99,80 @@
             "dst": "out/myrc.tint2rc",
             "src": "~/.config/tint2/myrc.tint2rc",
             "src_expanded": "/home/kai/.config/tint2/myrc.tint2rc",
+            "src_is_dir": false,
+            "src_dir_stat": null,
             "src_mode": 33188,
             "src_own": "kai",
             "src_grp": "kai"
         },
         {
-            "dst": "out/config.fish",
-            "src": "~/.config/fish/config.fish",
-            "src_expanded": "/home/kai/.config/fish/config.fish",
-            "src_mode": 33188,
+            "dst": "out/fish",
+            "src": "~/.config/fish/",
+            "src_expanded": "/home/kai/.config/fish",
+            "src_is_dir": true,
+            "src_dir_stat": [
+                {
+                    "name": "/home/kai/.config/fish/functions",
+                    "mode": 16832,
+                    "own": "kai",
+                    "grp": "kai"
+                },
+                {
+                    "name": "/home/kai/.config/fish/conf.d",
+                    "mode": 16877,
+                    "own": "kai",
+                    "grp": "kai"
+                },
+                {
+                    "name": "/home/kai/.config/fish/config.fish",
+                    "mode": 33188,
+                    "own": "kai",
+                    "grp": "kai"
+                },
+                {
+                    "name": "/home/kai/.config/fish/fish_variables",
+                    "mode": 33188,
+                    "own": "kai",
+                    "grp": "kai"
+                },
+                {
+                    "name": "/home/kai/.config/fish/fishd.kai-acer",
+                    "mode": 33188,
+                    "own": "kai",
+                    "grp": "kai"
+                },
+                {
+                    "name": "/home/kai/.config/fish/fishd.00e04c3614fd",
+                    "mode": 33188,
+                    "own": "kai",
+                    "grp": "kai"
+                },
+                {
+                    "name": "/home/kai/.config/fish/functions/fish_prompt.1535552535.copy",
+                    "mode": 33152,
+                    "own": "kai",
+                    "grp": "kai"
+                },
+                {
+                    "name": "/home/kai/.config/fish/functions/fish_prompt.fish",
+                    "mode": 33188,
+                    "own": "kai",
+                    "grp": "kai"
+                },
+                {
+                    "name": "/home/kai/.config/fish/conf.d/omf.fish",
+                    "mode": 33188,
+                    "own": "kai",
+                    "grp": "kai"
+                },
+                {
+                    "name": "/home/kai/.config/fish/conf.d/myfunction.fish",
+                    "mode": 33188,
+                    "own": "kai",
+                    "grp": "kai"
+                }
+            ],
+            "src_mode": 16832,
             "src_own": "kai",
             "src_grp": "kai"
         },
@@ -76,6 +180,8 @@
             "dst": "out/lightdm-gtk-greeter.conf",
             "src": "/etc/lightdm/lightdm-gtk-greeter.conf",
             "src_expanded": "/etc/lightdm/lightdm-gtk-greeter.conf",
+            "src_is_dir": false,
+            "src_dir_stat": null,
             "src_mode": 33188,
             "src_own": "root",
             "src_grp": "root"

@@ -2,10 +2,10 @@
 '''
 A script to manage backup of dotfile.
 Usage:
-    1. Run `./backup.py genempty` to generate a empty backup_list file. Then 
+    1. Run `./backup.py genempty` to generate a empty backup_list file. Then
     add the files need to be backuped to it.
     2. Run `./backup.py backup` to backup.
-    3. Run `./backup.py restore` to restore. restore action will attemp to 
+    3. Run `./backup.py restore` to restore. restore action will attemp to
     restore permission bits, ownner, group and other metainfo, so it may
     require root permission.
     4. Run `./backup.py clean` will delete all backuped files, include its metainfo.
@@ -83,6 +83,8 @@ def read_metainfo(filepath):
             rv.append(meta._replace(src_dir_stat=subfiles_stat))
         elif meta.src_dir_stat is not None:
             rv.append(meta._replace(src_dir_stat=None))
+        else:
+            rv.append(meta)
     return rv
 
 def meta_to_dict(metainfo: Metainfo):
@@ -111,6 +113,24 @@ def rename_dst(dst_path):
         dst_path = '_' + dst_path.lstrip('.')
     return dst_path
 
+def mkdir(dirpath):
+    '''mkdir recursively'''
+    dirpath = os.path.abspath(dirpath)
+    tomake = [dirpath]
+    while True:
+        dirpath = os.path.dirname(dirpath)
+        if os.path.exists(dirpath):
+            break
+        else:
+            tomake.insert(0, dirpath)
+    for d in tomake:
+        os.mkdir(d)
+
+def ensure_dir(filepath):
+    dirpath = os.path.dirname(filepath)
+    if not os.path.exists(dirpath):
+        mkdir(dirpath)
+
 def check_confirm(input_text, default):
     input_text = input_text.strip()
     if input_text == '':
@@ -121,17 +141,33 @@ def check_confirm(input_text, default):
         return False
     return False
 
+def get_filestat(filepath):
+    stat = os.stat(filepath)
+    mode = stat.st_mode
+    own = pwd.getpwuid(stat.st_uid).pw_name
+    grp = pwd.getpwuid(stat.st_gid).pw_name
+    return Filestat(name=filepath, mode=mode, own=own, grp=grp)
+
+def get_dir_filestats(dirpath):
+    files = []
+    for lay in os.walk(dirpath):
+        files.extend([os.path.join(lay[0], sub) for sub in lay[1] + lay[2]])
+    return [get_filestat(f) for f in files]
+
 def backup_from_meta(meta: Metainfo):
     '''Backup one file specified by meta'''
+    assert os.path.exists(meta.src_expanded)
+
     if os.path.exists(meta.dst):
         remove_dir_file(meta.dst)
     if os.path.isdir(meta.src_expanded):
-        shutil.copytree(meta.src_expanded, meta.dst)
+        shutil.copytree(meta.src_expanded, meta.dst, symlinks=True)
     else:
-        shutil.copy(meta.src_expanded, meta.dst)
+        ensure_dir(meta.dst)
+        shutil.copy(meta.src_expanded, meta.dst, follow_symlinks=False)
 
     # TODO 加入权限设置
-    # print("Sucessfully backup {} to {}".format(meta.src_expanded, meta.dst))
+    print("Sucessfully backup {} to {}".format(meta.src_expanded, meta.dst))
 
 def backup_action(filepath, user=None, group=None, mode='744', metainfo='metainfo', outdir='.'):
     '''Backup action'''
@@ -140,20 +176,43 @@ def backup_action(filepath, user=None, group=None, mode='744', metainfo='metainf
     filelist = read_backup_list(filepath)
 
     if not os.path.exists(outdir):
-        os.mkdir(outdir)
-    for src_name, dst_path in filelist:
-        expanded = os.path.abspath(os.path.expanduser(src_name))
-        stat = os.stat(expanded)
+        mkdir(outdir)
+    for src_name, user_dst in filelist:
+        src_abs = os.path.expanduser(src_name)
+        src_abs = os.path.abspath(src_abs)
+        src_abs = os.path.realpath(src_abs)
+        assert os.path.exists(src_abs)
+
+        stat = os.stat(src_abs)
+        mode = stat.st_mode
         own = pwd.getpwuid(stat.st_uid).pw_name
         grp = pwd.getpwuid(stat.st_gid).pw_name
-        # realpath去掉目录末尾的斜杠
-        if not dst_path:
-            dst = os.path.split(os.path.realpath(expanded))[1]
+
+        dst = None
+        if not user_dst:
+            # user did not give a dst path
+            # realpath() remove slash suffix of directory name and keep file name unchanged
+            dst = os.path.basename(src_abs)
             dst = rename_dst(dst)
         else:
-            dst = dst_path
+            # user did give a dst path
+            if os.path.basename(user_dst) == '':
+                # user give a directory
+                base_name = os.path.basename(src_abs)
+                base_name = rename_dst(base_name)
+                dst = os.path.join(user_dst, base_name)
+            else:
+                # user give a filepath
+                dst = user_dst
         dst = os.path.join(outdir, dst)
-        meta = Metainfo(src=src_name, src_expanded=expanded, dst=dst,
+
+        src_is_dir = os.path.isdir(src_abs)
+        src_dir_stat = None
+        if src_is_dir:
+            src_dir_stat = get_dir_filestats(src_abs)
+
+        meta = Metainfo(src=src_name, src_expanded=src_abs, dst=dst,
+                src_is_dir=src_is_dir, src_dir_stat=src_dir_stat,
                 src_mode=stat.st_mode, src_own=own, src_grp=grp)
 
         backup_from_meta(meta)
@@ -161,44 +220,59 @@ def backup_action(filepath, user=None, group=None, mode='744', metainfo='metainf
 
     write_metainfo(metalist, 'metainfo')
 
+def chown_dir(dirmeta):
+    for sub in dirmeta.src_dir_stat:
+        shutil.chown(sub.name, sub.own, sub.grp)
+        os.chmod(sub.name, sub.mode)
+
 __confirm_all__ = False
 def restore_from_meta(meta: Metainfo, confirm=True):
     global __confirm_all__
+
+    if not os.path.exists(meta.dst):
+        print("file '{}' not found".format(meta.dst))
+
     if os.path.exists(meta.src_expanded):
         if not __confirm_all__ and confirm:
             info = "{} existed. Overwrite? [Y/n/a]".format(meta.src_expanded)
             cfm = input(info).strip()
             if cfm == 'a':
                 __confirm_all__ = True
-                return
-            if not check_confirm(cfm, True):
+            elif not check_confirm(cfm, True):
                 print("{} skipped.".format(meta.src_expanded))
                 return
         remove_dir_file(meta.src_expanded)
 
-    if not os.path.exists(meta.dst):
-        raise FileNotFoundError(meta.dst)
-
     if os.path.isdir(meta.dst):
-        shutil.copytree(meta.dst, meta.src_expanded)
+        shutil.copytree(meta.dst, meta.src_expanded, symlinks=True)
+        chown_dir(meta)
     else:
         dir = os.path.split(meta.src_expanded)[0]
         if not os.path.exists(dir):
-            os.mkdir(dir)
-        shutil.copy(meta.dst, meta.src_expanded)
+            mkdir(dir)
+        shutil.copy(meta.dst, meta.src_expanded, follow_symlinks=False)
 
     # TODO chown/chmod recursively
     shutil.chown(meta.src_expanded, meta.src_own, meta.src_grp)
     os.chmod(meta.src_expanded, meta.src_mode)
+    print('Restored ' + meta.src_expanded)
 
 def restore_action(metafile):
     '''Restore action'''
-    # TODO show check info before restore
+    # TODO restore subfiles
+    __confirm_all__ = False
+
     metalist = read_metainfo(metafile)
     print('Please check:')
     for i, meta in enumerate(metalist):
-        dir_flag = 'd' if os.path.isdir(meta.src_expanded) else 'f'
-        print('[{}][{}] {}'.format(i, dir_flag, meta.src_expanded))
+        flag = None
+        if not os.path.exists(meta.dst):
+            flag = 'x'
+        elif os.path.isdir(meta.dst):
+            flag = 'd'
+        else:
+            flag = 'f'
+        print('[{}][{}] {}'.format(i, flag, meta.src_expanded))
     if not check_confirm(input('These files will be restored. Continue? [y/N]'), False):
         return
     for meta in metalist:
