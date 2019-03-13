@@ -231,6 +231,10 @@ nnoremap ]a :ALENext<CR>
 noremap <silent> ]q :cnext<CR>
 noremap <silent> [q :cprevious<CR>
 
+" copy
+vnoremap <C-C> "+y
+nnoremap <C-C> "+yy
+
 " ycm
 "nnoremap <silent> ygd :YcmCompleter GoTo<CR>
 
