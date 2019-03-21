@@ -26,6 +26,8 @@ end
 function pppex
     echo 'killing NetworkManager...'
     sudo systemctl stop NetworkManager
+    echo 'killing wpa_supplicant'
+    sudo pkill wpa_supplicant
     echo 'start pppoe-connect...'
     sudo pppoe-connect
 end
