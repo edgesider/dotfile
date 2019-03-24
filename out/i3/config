@@ -133,12 +133,11 @@ bindsym $mod+Shift+n exec --no-startup-id kill -s 10 `cat /tmp/autofeh.pid`
 bindsym Mod4+l exec --no-startup-id dm-tool switch-to-greeter
 
 # assign
-assign [class="Chromium"] → 3:Chromium
-assign [class="Zathura"] → 5:Read
-assign [class="netease-cloud-music"] → 4:Music
+assign [class="Chromium"] → $ws3
+assign [class="Zathura"] → $ws5
 
 # for_window
-for_window [class="Lxrandr"] border pixel 10
+for_window [class="Lxrandr"] border pixel 5
 for_window [class="Chromium"] border pixel 0
 for_window [class="konsole"] border pixel 5
 for_window [title="JetBrains Toolbox"] floating enable
@@ -146,7 +145,7 @@ for_window [title="JetBrains Toolbox"] border pixel 5
 for_window [window_role="GtkFileChooserDialog"] border pixel 10
 
 # autostart
-# exec --no-startup-id compton
+exec --no-startup-id compton
 exec --no-startup-id ~/.local/bin/autofeh
 exec --no-startup-id xfce4-power-manager
 exec --no-startup-id nm-applet

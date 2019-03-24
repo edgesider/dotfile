@@ -179,7 +179,7 @@ set wildmenu wildmode=longest,full" Ex模式下Tab键补全窗口
 set clipboard=unnamed
 set completeopt=longest,menu
 set updatetime=100 " 及时写入swap文件，保证tagbar的及时更新
-set ttimeoutlen=-1 " 退出编辑模式不等待
+set ttimeoutlen=100 " 退出编辑模式不等待
 set noshowmode
 
 syntax enable " 开启语法高亮功能
