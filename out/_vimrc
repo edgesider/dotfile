@@ -19,6 +19,38 @@ func! SetWin32Gui()
     set backspace=indent,eol,start   " 任何时候都可以使用退格键
 endfunc
 
+" 查看模式保持光标在中间
+func! LookingMap()
+    try
+        nnoremap <buffer> j jzz
+        nnoremap <buffer> k kzz
+        nnoremap <buffer> G Gzz
+        nnoremap <buffer> <c-d> <c-d>zz
+        nnoremap <buffer> <c-u> <c-u>zz
+        nnoremap <buffer> * *zz
+        nnoremap <buffer> # #zz
+        nnoremap <buffer> <Down> <Down>zz
+        nnoremap <buffer> <Up> <Up>zz
+    endtry
+    set colorcolumn=0
+endfunc
+func! NonLookingMap()
+    try
+        unmap <buffer> j
+        unmap <buffer> k
+        unmap <buffer> G
+        unmap <buffer> <c-d>
+        unmap <buffer> <c-u>
+        unmap <buffer> *
+        unmap <buffer> #
+        unmap <buffer> <down>
+        unmap <buffer> <up>
+    endtry
+    set colorcolumn=100
+endfunc
+command Imlooking call LookingMap()
+command Imwriting call NonLookingMap()
+
 func! SaveSpace()
 py3 << EOF
 import vim
