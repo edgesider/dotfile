@@ -11,7 +11,7 @@ set $ws2 "2:SSH"
 set $ws3 "3:Chromium"
 set $ws4 "4"
 set $ws5 "5"
-set $ws6 "6:Daemon"
+set $ws6 "6:"
 set $ws7 "7"
 set $ws8 "8"
 set $ws9 "9"
@@ -154,3 +154,5 @@ exec --no-startup-id dunst
 exec --no-startup-id xmodmap ~/.Xmodmap
 exec --no-startup-id volumeicon
 exec --no-startup-id nutstore
+exec --no-startup-id sh -c "/usr/lib/kdeconnectd >/dev/null 2>&1"
+exec --no-startup-id kdeconnect-indicator

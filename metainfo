@@ -3,7 +3,7 @@
         {
             "dst": "out/_vimrc",
             "src": "~/.vimrc",
-            "src_expanded": "/home/kai/.vimrc",
+            "src_expanded": "/home/kai/.vim/.vimrc",
             "src_is_dir": false,
             "src_dir_stat": null,
             "src_mode": 33188,
@@ -173,6 +173,16 @@
                 }
             ],
             "src_mode": 16832,
+            "src_own": "kai",
+            "src_grp": "kai"
+        },
+        {
+            "dst": "out/awesome.rc.lua",
+            "src": "~/.config/awesome/rc.lua",
+            "src_expanded": "/home/kai/.config/awesome/rc.lua",
+            "src_is_dir": false,
+            "src_dir_stat": null,
+            "src_mode": 33188,
             "src_own": "kai",
             "src_grp": "kai"
         },

@@ -25,26 +25,52 @@ func! LookingMap()
         nnoremap <buffer> j jzz
         nnoremap <buffer> k kzz
         nnoremap <buffer> G Gzz
+        nnoremap <buffer> <c-e> jzz
+        nnoremap <buffer> <c-y> kzz
         nnoremap <buffer> <c-d> <c-d>zz
         nnoremap <buffer> <c-u> <c-u>zz
         nnoremap <buffer> * *zz
         nnoremap <buffer> # #zz
         nnoremap <buffer> <Down> <Down>zz
         nnoremap <buffer> <Up> <Up>zz
+        vnoremap <buffer> j jzz
+        vnoremap <buffer> k kzz
+        vnoremap <buffer> G Gzz
+        vnoremap <buffer> <c-e> jzz
+        vnoremap <buffer> <c-y> kzz
+        vnoremap <buffer> <c-d> <c-d>zz
+        vnoremap <buffer> <c-u> <c-u>zz
+        vnoremap <buffer> * *zz
+        vnoremap <buffer> # #zz
+        vnoremap <buffer> <Down> <Down>zz
+        vnoremap <buffer> <Up> <Up>zz
     endtry
     set colorcolumn=0
 endfunc
 func! NonLookingMap()
     try
-        unmap <buffer> j
-        unmap <buffer> k
-        unmap <buffer> G
-        unmap <buffer> <c-d>
-        unmap <buffer> <c-u>
-        unmap <buffer> *
-        unmap <buffer> #
-        unmap <buffer> <down>
-        unmap <buffer> <up>
+        nunmap <buffer> j
+        nunmap <buffer> k
+        nunmap <buffer> G
+        nunmap <buffer> <c-e>
+        nunmap <buffer> <c-y>
+        nunmap <buffer> <c-d>
+        nunmap <buffer> <c-u>
+        nunmap <buffer> *
+        nunmap <buffer> #
+        nunmap <buffer> <down>
+        nunmap <buffer> <up>
+        vunmap <buffer> j
+        vunmap <buffer> k
+        vunmap <buffer> G
+        vunmap <buffer> <c-e>
+        vunmap <buffer> <c-y>
+        vunmap <buffer> <c-d>
+        vunmap <buffer> <c-u>
+        vunmap <buffer> *
+        vunmap <buffer> #
+        vunmap <buffer> <down>
+        vunmap <buffer> <up>
     endtry
     set colorcolumn=100
 endfunc
@@ -151,6 +177,7 @@ endif
 
 if !has('win32')
     set shell=/bin/bash
+    set fileencodings=ucs-bom,utf-8,cp936,default,latin1
 endif
 scriptencoding utf8
 
