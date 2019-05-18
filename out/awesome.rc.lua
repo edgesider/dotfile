@@ -14,6 +14,9 @@ local beautiful = require("beautiful")
 local naughty = require("naughty")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup")
+
+local xrandr = require("xrandr")
+
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
@@ -54,7 +57,8 @@ beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
 -- beautiful.init("/home/kai/.config/awesome")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "konsole"
+--terminal = "konsole"
+terminal = "xfce4-terminal"
 editor = os.getenv("EDITOR") or "/usr/bin/vim"
 editor_cmd = terminal .. " -e " .. editor
 rofi_cmd = "rofi -modi combi -combi-modi drun,run -show combi"
@@ -345,7 +349,9 @@ globalkeys = gears.table.join(
     -- other
     awful.key({ modkey, "Shift" }, "n", set_wallpaper,
               {description = "change wallpaper", group = "awesome"}),
-    awful.key({ "Mod4" }, "p", function() run_once("lxrandr") end,
+    --awful.key({ "Mod4" }, "p", function() run_once("lxrandr") end,
+              --{description = "Monitor Settings", group = "awesome"}),
+    awful.key({ "Mod4" }, "p", xrandr.xrandr,
               {description = "Monitor Settings", group = "awesome"})
 )
 
@@ -531,6 +537,7 @@ awful.rules.rules = {
         properties = { floating = false, tag = "3" , maximized = false },
         -- Set maximized in callback. Avoid appear of border.
         callback = function (c)
+            c.ontop = false
             c.maximized = true
         end
     },
@@ -614,7 +621,8 @@ do
         "volumeicon",
         "xmodmap ~/.Xmodmap",
         "xfce4-power-manager",
-        "/home/kai/script/autofeh.py",
+        -- "/home/kai/script/autofeh.py",
+        "feh --bg-fill /home/kai/Photo/wallpaper.jpg",
         "/usr/lib/kdeconnectd"
     }
 

@@ -199,6 +199,9 @@ packadd! vim-airline
 " packadd! gutentags_plus
 packadd! LeaderF
 
+packadd! c-syntax.vim
+packadd! python-syntax
+
 set sessionoptions-=curdir
 set sessionoptions+=sesdir
 set sessionoptions-=blank
@@ -210,7 +213,23 @@ set sessionoptions+=slash
 nnoremap <silent> <C-F9> :call SaveSpace()<CR>
 nnoremap <silent> <C-F10> :call LoadSpace()<CR>
 
-colorscheme molokai
+"colorscheme molokai
+let g:PaperColor_Theme_Options = {
+  \   'language': {
+  \     'python': {
+  \       'highlight_builtins' : 1
+  \     },
+  \     'cpp': {
+  \       'highlight_standard_library': 1
+  \     },
+  \     'c': {
+  \       'highlight_builtins' : 1
+  \     }
+  \   }
+  \ }
+set background=dark
+colorscheme PaperColor
+
 "自动补全
 filetype plugin indent on
 setlocal cryptmethod=blowfish2  " 设置加密方式
