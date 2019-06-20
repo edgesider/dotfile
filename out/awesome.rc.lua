@@ -72,25 +72,9 @@ modkey = "Mod3"
 -- modkey = "Mod4"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
-awful.layout.layouts = {
-    awful.layout.suit.tile,
-    awful.layout.suit.corner.nw,
-    awful.layout.suit.floating,
-    awful.layout.suit.max,
-    -- awful.layout.suit.tile.left,
-    -- awful.layout.suit.tile.bottom,
-    -- awful.layout.suit.tile.top,
-    -- awful.layout.suit.fair,
-    -- awful.layout.suit.fair.horizontal,
-    -- awful.layout.suit.spiral,
-    -- awful.layout.suit.spiral.dwindle,
-    -- awful.layout.suit.max.fullscreen,
-    -- awful.layout.suit.magnifier,
-    -- awful.layout.suit.corner.ne,
-    -- awful.layout.suit.corner.sw,
-    -- awful.layout.suit.corner.se,
+local tag1_layout = {
+    awful.layout.suit.max
 }
--- }}}
 
 -- {{{ Menu
 -- Create a launcher widget and a main menu
@@ -129,9 +113,9 @@ local taglist_buttons = gears.table.join(
         if client.focus then
             client.focus:toggle_tag(t)
         end
-    end),
-    awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
-    awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
+    end)
+    --awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
+    --awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
 )
 
 local tasklist_buttons = gears.table.join(
@@ -175,12 +159,41 @@ end
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
 
+awful.layout.layouts = {
+    awful.layout.suit.tile,
+    awful.layout.suit.corner.nw,
+    awful.layout.suit.floating,
+    awful.layout.suit.max,
+    -- awful.layout.suit.tile.left,
+    -- awful.layout.suit.tile.bottom,
+    -- awful.layout.suit.tile.top,
+    -- awful.layout.suit.fair,
+    -- awful.layout.suit.fair.horizontal,
+    -- awful.layout.suit.spiral,
+    -- awful.layout.suit.spiral.dwindle,
+    -- awful.layout.suit.max.fullscreen,
+    -- awful.layout.suit.magnifier,
+    -- awful.layout.suit.corner.ne,
+    -- awful.layout.suit.corner.sw,
+    -- awful.layout.suit.corner.se,
+}
+-- }}}
+
 awful.screen.connect_for_each_screen(function(s)
     -- Wallpaper
     set_wallpaper(s)
 
     -- Each screen has its own tag table.
-    awful.tag({ " 1", " 2", " 3", " 4", " 5", " 6", " 7", " 8", " 9" }, s, awful.layout.layouts[1])
+    --awful.tag({ " 1", " 2", " 3", " 4", " 5", " 6", " 7", " 8", " 9" }, s, awful.layout.layouts[1])
+    awful.tag.add(" 1", {
+        screen = s,
+        layout = awful.layout.suit.max,
+        selected = true
+    })
+    for i = 2, 9 do
+        awful.tag.add(" " .. i,
+            { screen = s, layout = awful.layout.layouts[1] })
+    end
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
@@ -232,9 +245,9 @@ end)
 
 -- {{{ Mouse bindings
 root.buttons(gears.table.join(
-    awful.button({ }, 3, function () mymainmenu:toggle() end),
-    awful.button({ }, 4, awful.tag.viewnext),
-    awful.button({ }, 5, awful.tag.viewprev)
+    awful.button({ }, 3, function () mymainmenu:toggle() end)
+    --awful.button({ }, 4, awful.tag.viewnext),
+    --awful.button({ }, 5, awful.tag.viewprev)
 ))
 -- }}}
 
@@ -356,7 +369,7 @@ globalkeys = gears.table.join(
     --awful.key({ "Mod4" }, "p", function() run_once("lxrandr") end,
     --{description = "Monitor Settings", group = "awesome"}),
     awful.key({ "Mod4" }, "p", xrandr.xrandr,
-        {description = "Monitor Settings", group = "awesome"})
+        {description = "Monitor Settings", group = "awesome"}),
 )
 
 clientkeys = gears.table.join(
@@ -549,13 +562,24 @@ awful.rules.rules = {
     --},
 
     { rule = { class = "Chromium", role = "browser" },
-        properties = { floating = false, tag = "3" , maximized = false },
+        properties = { floating = false, tag = " 3" , maximized = false },
         -- Set maximized in callback. Avoid appear of border.
         callback = function (c)
             c.ontop = false
             c.maximized = true
         end
     },
+
+    { rule = {}, properties = {},
+        callback = function(c)
+            if c.class == 'jetbrains-studio' then
+                return
+            end
+            if c.floating then
+                awful.placement.centered(c, nil)
+            end
+        end
+    }
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
     -- { rule = { class = "Firefox" },
@@ -638,7 +662,8 @@ do
         "xfce4-power-manager",
         -- "/home/kai/script/autofeh.py",
         "feh --bg-fill /home/kai/Photo/wallpaper.jpg",
-        "/usr/lib/kdeconnectd"
+        "/usr/lib/kdeconnectd",
+        "xbindkeys"
     }
 
     for _, i in pairs(cmds) do

@@ -195,6 +195,16 @@
             "src_mode": 33188,
             "src_own": "root",
             "src_grp": "root"
+        },
+        {
+            "dst": "out/xbindkeysrc",
+            "src": "~/.xbindkeysrc",
+            "src_expanded": "/home/kai/.xbindkeysrc",
+            "src_is_dir": false,
+            "src_dir_stat": null,
+            "src_mode": 33188,
+            "src_own": "kai",
+            "src_grp": "kai"
         }
     ]
 }

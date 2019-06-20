@@ -9,5 +9,6 @@
 ["~/.config/tint2/myrc.tint2rc", ""],
 ["~/.config/fish/", ""],
 ["~/.config/awesome/rc.lua", "awesome.rc.lua"],
-["/etc/lightdm/lightdm-gtk-greeter.conf", ""]
+["/etc/lightdm/lightdm-gtk-greeter.conf", ""],
+["~/.xbindkeysrc", "xbindkeysrc"]
 ]
