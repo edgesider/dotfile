@@ -64,12 +64,19 @@
 ## Control + mouse button 2 release event starts rxvt
 #"rxvt"
 #  Control + b:2 + Release
-#
-"xte 'key Right'"
+
+#"xdotool click 6"
+#"sh -c 'xdo button_press -k 6; xdo button_release -k 6'"
+"xte 'mouseclick 6'"
     Shift + b:4
 
-"xte 'key Left'"
+#"xdotool click 7"
+#"sh -c 'xdo button_press -k 7; xdo button_release -k 7'"
+"xte 'mouseclick 7'"
     Shift + b:5
+
+"/usr/bin/gnome-calculator"
+    XF86Calculator
 
 ##################################
 # End of xbindkeys configuration #

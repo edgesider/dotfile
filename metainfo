@@ -205,6 +205,16 @@
             "src_mode": 33188,
             "src_own": "kai",
             "src_grp": "kai"
+        },
+        {
+            "dst": "out/fonts.conf",
+            "src": "~/.config/fontconfig/fonts.conf",
+            "src_expanded": "/home/kai/.config/fontconfig/fonts.conf",
+            "src_is_dir": false,
+            "src_dir_stat": null,
+            "src_mode": 33188,
+            "src_own": "kai",
+            "src_grp": "kai"
         }
     ]
 }

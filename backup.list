@@ -10,5 +10,6 @@
 ["~/.config/fish/", ""],
 ["~/.config/awesome/rc.lua", "awesome.rc.lua"],
 ["/etc/lightdm/lightdm-gtk-greeter.conf", ""],
-["~/.xbindkeysrc", "xbindkeysrc"]
+["~/.xbindkeysrc", "xbindkeysrc"],
+["~/.config/fontconfig/fonts.conf", ""]
 ]
