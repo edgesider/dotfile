@@ -1,1 +1,1 @@
-/home/kai/.local/share/omf/themes/eden/fish_prompt.fish
+/home/kai/.local/share/omf/themes/boxfish/fish_prompt.fish

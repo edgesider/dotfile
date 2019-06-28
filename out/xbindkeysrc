@@ -78,6 +78,9 @@
 "/usr/bin/gnome-calculator"
     XF86Calculator
 
+"emojione-picker"
+    Mod4 + m
+
 ##################################
 # End of xbindkeys configuration #
 ##################################

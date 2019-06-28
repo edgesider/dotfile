@@ -59,7 +59,7 @@ end
 
 modkey = "Mod3"
 terminal = "konsole"
-terminal = "xfce4-terminal"
+--terminal = "xfce4-terminal"
 editor = os.getenv("EDITOR") or "/usr/bin/vim"
 editor_cmd = terminal .. " -e " .. editor
 rofi_cmd = "rofi -modi combi -combi-modi drun,run -show combi"
@@ -108,47 +108,13 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 
 -- {{{ Wibar
 -- Create a textclock widget
-mytextclock = wibox.widget.textclock(" %a %b %d %H:%M:%S", 1)
-
--- Create a wibox for each screen and add it
-local taglist_buttons = gears.table.join(
-        awful.button({ }, 1, function(t)
-            t:view_only()
-        end),
-        awful.button({ }, 3, awful.tag.viewtoggle),
-        awful.button({ modkey }, 3, function(t)
-            if client.focus then
-                client.focus:toggle_tag(t)
-            end
-        end)
---awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
---awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
-)
-
-local tasklist_buttons = gears.table.join(
-        awful.button({ }, 1, function(c)
-            if c == client.focus then
-                c.minimized = true
-            else
-                c:emit_signal(
-                        "request::activate",
-                        "tasklist",
-                        { raise = true }
-                )
-            end
-        end),
-        awful.button({}, 2, function(c)
-            c:kill()
-        end),
-        awful.button({ }, 3, function()
-            awful.menu.client_list({ theme = { width = 250 } })
-        end),
-        awful.button({ }, 4, function()
-            awful.client.focus.byidx(1)
-        end),
-        awful.button({ }, 5, function()
-            awful.client.focus.byidx(-1)
-        end))
+topclock = wibox.widget.textclock("<span font=\"Source Code Pro Bold 10\">%H:%M:%S</span>", 1)
+botclock = wibox.widget.textclock("<span font=\"Source Code Pro Bold 10\">%a %b %d</span>", 1)
+mytextclock = wibox.widget {
+    topclock,
+    botclock,
+    layout = wibox.layout.fixed.vertical,
+}
 
 local function set_wallpaper(s)
     -- Wallpaper
@@ -160,7 +126,7 @@ local function set_wallpaper(s)
     --     end
     --     gears.wallpaper.maximized(wallpaper, s, true)
     -- end
-    awful.spawn.with_shell("kill -USR1 $(cat /tmp/autofeh.pid)")
+    --awful.spawn.with_shell("kill -USR1 $(cat /tmp/autofeh.pid)")
 end
 
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
@@ -192,13 +158,13 @@ awful.screen.connect_for_each_screen(function(s)
 
     -- Each screen has its own tag table.
     --awful.tag({ " 1", " 2", " 3", " 4", " 5", " 6", " 7", " 8", " 9" }, s, awful.layout.layouts[1])
-    awful.tag.add(" 1", {
+    awful.tag.add("1", {
         screen = s,
         layout = awful.layout.suit.max,
         selected = true
     })
     for i = 2, 9 do
-        awful.tag.add(" " .. i,
+        awful.tag.add(i,
                 { screen = s, layout = awful.layout.layouts[1] })
     end
 
@@ -206,7 +172,7 @@ awful.screen.connect_for_each_screen(function(s)
     s.mypromptbox = awful.widget.prompt()
     -- Create an imagebox widget which will contain an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
-    s.mylayoutbox = awful.widget.layoutbox(s)
+    s.mylayoutbox = wibox.layout.margin(awful.widget.layoutbox(s), 5, 3, 5, 5)
     s.mylayoutbox:buttons(gears.table.join(
             awful.button({ }, 1, function()
                 awful.layout.inc(1)
@@ -224,19 +190,87 @@ awful.screen.connect_for_each_screen(function(s)
     s.mytaglist = awful.widget.taglist {
         screen = s,
         filter = awful.widget.taglist.filter.all,
-        buttons = taglist_buttons
+        buttons = gears.table.join(
+        awful.button({ }, 1, function(t)
+            t:view_only()
+        end),
+        awful.button({ }, 3, awful.tag.viewtoggle),
+        awful.button({ modkey }, 3, function(t)
+            if client.focus then
+                client.focus:toggle_tag(t)
+            end
+        end),
+        awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
+        awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
+        )
+
     }
 
     -- Create a tasklist widget
     s.mytasklist = awful.widget.tasklist {
         screen = s,
         filter = awful.widget.tasklist.filter.currenttags,
-        buttons = tasklist_buttons
+        buttons = gears.table.join(
+        awful.button({ }, 1, function(c)
+            if c == client.focus then
+                c.minimized = true
+            else
+                c:emit_signal(
+                "request::activate",
+                "tasklist",
+                { raise = true }
+                )
+            end
+        end),
+        awful.button({}, 2, function(c)
+            c:kill()
+        end),
+        awful.button({ }, 3, function()
+            awful.menu.client_list({ theme = { width = 250 } })
+        end),
+        awful.button({ }, 4, function()
+            awful.client.focus.byidx(1)
+        end),
+        awful.button({ }, 5, function()
+            awful.client.focus.byidx(-1)
+        end)) ,
+
+        style    = {
+            border_width = 2,
+            border_color = '#777777',
+            shape        = gears.shape.rounded_bar,
+        },
+
+        widget_template = {
+            id     = 'background_role',
+            widget = wibox.container.background,
+            {
+                left  = 10,
+                right = 10,
+                widget = wibox.container.margin,
+                {
+                    layout = wibox.layout.fixed.horizontal,
+                    {
+                        {
+                            id     = 'icon_role',
+                            widget = wibox.widget.imagebox,
+                        },
+                        margins = 5,
+                        widget  = wibox.container.margin,
+                    },
+                    {
+                        id     = 'text_role',
+                        widget = wibox.widget.textbox,
+                    },
+                },
+            },
+        },
     }
 
     -- Create the wibox
     s.mywibox = awful.wibar({ position = "bottom", screen = s })
 
+    systray = wibox.container.margin(wibox.widget.systray(true), 4, 4, 4, 4)
     -- Add widgets to the wibox
     s.mywibox:setup {
         layout = wibox.layout.align.horizontal,
@@ -249,12 +283,13 @@ awful.screen.connect_for_each_screen(function(s)
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            mykeyboardlayout,
-            wibox.widget.systray(),
+            --mykeyboardlayout,
+            systray,
             mytextclock,
             s.mylayoutbox,
         },
     }
+    s.mywibox.ontop = true
 end)
 -- }}}
 
@@ -592,6 +627,7 @@ awful.rules.rules = {
             "Event Tester", -- xev.
         },
         role = {
+            "toolbox_windows",
             "AlarmWindow", -- Thunderbird's calendar.
             "ConfigManager", -- Thunderbird's about:config.
             "pop-up", -- e.g. Google Chrome's (detached) Developer Tools.

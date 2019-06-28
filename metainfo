@@ -27,28 +27,22 @@
             "src_is_dir": true,
             "src_dir_stat": [
                 {
-                    "name": "/home/kai/.config/plasma-workspace/shutdown",
-                    "mode": 16877,
-                    "own": "root",
-                    "grp": "root"
-                },
-                {
                     "name": "/home/kai/.config/plasma-workspace/env",
                     "mode": 16877,
-                    "own": "root",
-                    "grp": "root"
+                    "own": "kai",
+                    "grp": "kai"
                 },
                 {
                     "name": "/home/kai/.config/plasma-workspace/env/env.sh",
                     "mode": 33188,
-                    "own": "root",
-                    "grp": "root"
+                    "own": "kai",
+                    "grp": "kai"
                 },
                 {
                     "name": "/home/kai/.config/plasma-workspace/env/path.sh",
                     "mode": 33188,
-                    "own": "root",
-                    "grp": "root"
+                    "own": "kai",
+                    "grp": "kai"
                 }
             ],
             "src_mode": 16877,
