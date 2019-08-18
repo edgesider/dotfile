@@ -103,19 +103,6 @@ mymainmenu = awful.menu(
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
 
--- Keyboard map indicator and switcher
-mykeyboardlayout = awful.widget.keyboardlayout()
-
--- {{{ Wibar
--- Create a textclock widget
-topclock = wibox.widget.textclock("<span font=\"Source Code Pro Bold 10\">%H:%M:%S</span>", 1)
-botclock = wibox.widget.textclock("<span font=\"Source Code Pro Bold 10\">%a %b %d</span>", 1)
-mytextclock = wibox.widget {
-    topclock,
-    botclock,
-    layout = wibox.layout.fixed.vertical,
-}
-
 local function set_wallpaper(s)
     -- Wallpaper
     -- if beautiful.wallpaper then
@@ -151,6 +138,32 @@ awful.layout.layouts = {
     -- awful.layout.suit.corner.se,
 }
 -- }}}
+
+local _shown_menu = {}
+task_control_menu = {}
+function task_menu_toggle(c)
+    if _shown_menu[1] ~= nil then
+        _shown_menu[1]:hide()
+        _shown_menu[1]:delete()
+        _shown_menu[1] = nil
+    end
+    menu = awful.menu({
+        {
+            "Close",
+            function ()
+                c:kill()
+            end,
+        },
+        {
+            "Move",
+            function ()
+                awful.mouse.client.move(c)
+            end,
+        }
+    })
+    menu:show()
+    _shown_menu[1] = menu
+end
 
 awful.screen.connect_for_each_screen(function(s)
     -- Wallpaper
@@ -211,30 +224,31 @@ awful.screen.connect_for_each_screen(function(s)
         screen = s,
         filter = awful.widget.tasklist.filter.currenttags,
         buttons = gears.table.join(
-        awful.button({ }, 1, function(c)
-            if c == client.focus then
-                c.minimized = true
-            else
-                c:emit_signal(
-                "request::activate",
-                "tasklist",
-                { raise = true }
-                )
-            end
-        end),
-        awful.button({}, 2, function(c)
-            c:kill()
-        end),
-        awful.button({ }, 3, function()
-            awful.menu.client_list({ theme = { width = 250 } })
-        end),
-        awful.button({ }, 4, function()
-            awful.client.focus.byidx(1)
-        end),
-        awful.button({ }, 5, function()
-            awful.client.focus.byidx(-1)
-        end)) ,
-
+            awful.button({ }, 1, function(c)
+                if c == client.focus then
+                    c.minimized = true
+                else
+                    c:emit_signal(
+                    "request::activate",
+                    "tasklist",
+                    { raise = true })
+                end
+            end),
+            awful.button({}, 2, function(c)
+                c:kill()
+            end),
+            awful.button({ }, 3, task_menu_toggle
+            --function(c)
+                --awful.menu.client_list({ theme = { width = 250 } })
+            --end),
+            ),
+            awful.button({ }, 4, function()
+                awful.client.focus.byidx(1)
+            end),
+            awful.button({ }, 5, function()
+                awful.client.focus.byidx(-1)
+            end)
+        ),
         style    = {
             border_width = 2,
             border_color = '#777777',
@@ -267,10 +281,20 @@ awful.screen.connect_for_each_screen(function(s)
         },
     }
 
+    -- Create a textclock widget
+    topclock = wibox.widget.textclock("<span font=\"Source Code Pro Medium 12\">%H:%M:%S</span>", 1)
+    botclock = wibox.widget.textclock("<span font=\"Source Code Pro Medium 10\">%a %d %b</span>", 1)
+    mytextclock = wibox.widget {
+        topclock,
+        botclock,
+        layout = wibox.layout.fixed.vertical,
+    }
+
+    -- Create systray
+    systray = wibox.container.margin(wibox.widget.systray(true), 4, 4, 4, 4)
+
     -- Create the wibox
     s.mywibox = awful.wibar({ position = "bottom", screen = s })
-
-    systray = wibox.container.margin(wibox.widget.systray(true), 4, 4, 4, 4)
     -- Add widgets to the wibox
     s.mywibox:setup {
         layout = wibox.layout.align.horizontal,
@@ -289,7 +313,6 @@ awful.screen.connect_for_each_screen(function(s)
             s.mylayoutbox,
         },
     }
-    s.mywibox.ontop = true
 end)
 -- }}}
 
@@ -371,36 +394,35 @@ globalkeys = gears.table.join(
 
         awful.key({ modkey, }, "l", function()
             awful.tag.incmwfact(0.05)
-        end,
-                { description = "increase master width factor", group = "layout" }),
+        end, { description = "increase master width factor", group = "layout" }),
+
         awful.key({ modkey, }, "h", function()
             awful.tag.incmwfact(-0.05)
-        end,
-                { description = "decrease master width factor", group = "layout" }),
+        end, { description = "decrease master width factor", group = "layout" }),
+
         awful.key({ modkey, "Shift" }, "h", function()
             awful.tag.incnmaster(1, nil, true)
-        end,
-                { description = "increase the number of master clients", group = "layout" }),
+        end, { description = "increase the number of master clients", group = "layout" }),
+
         awful.key({ modkey, "Shift" }, "l", function()
             awful.tag.incnmaster(-1, nil, true)
-        end,
-                { description = "decrease the number of master clients", group = "layout" }),
+        end, { description = "decrease the number of master clients", group = "layout" }),
+
         awful.key({ modkey, "Control" }, "h", function()
             awful.tag.incncol(1, nil, true)
-        end,
-                { description = "increase the number of columns", group = "layout" }),
+        end, { description = "increase the number of columns", group = "layout" }),
+
         awful.key({ modkey, "Control" }, "l", function()
             awful.tag.incncol(-1, nil, true)
-        end,
-                { description = "decrease the number of columns", group = "layout" }),
+        end, { description = "decrease the number of columns", group = "layout" }),
+
         awful.key({ modkey, }, "space", function()
             awful.layout.inc(1)
-        end,
-                { description = "select next", group = "layout" }),
+        end, { description = "select next", group = "layout" }),
+
         awful.key({ modkey, "Shift" }, "space", function()
             awful.layout.inc(-2)
-        end,
-                { description = "select previous", group = "layout" }),
+        end, { description = "select previous", group = "layout" }),
 
         awful.key({ modkey, "Control" }, "n",
                 function()
@@ -429,9 +451,10 @@ globalkeys = gears.table.join(
 -- awful.key({ modkey },            "r",     function () awful.screen.focused().mypromptbox:run() end,
 --           {description = "run prompt", group = "launcher"}),
 -- Menubar
-        awful.key({ modkey }, "p", function()
-            menubar.show()
-        end,
+        awful.key({ modkey }, "p",
+                function()
+                    menubar.show()
+                end,
                 { description = "show the menubar", group = "launcher" }),
 -- rofi
         awful.key({ modkey }, "d",
@@ -448,8 +471,9 @@ globalkeys = gears.table.join(
 -- other
         awful.key({ modkey, "Shift" }, "n", set_wallpaper,
                 { description = "change wallpaper", group = "awesome" }),
---awful.key({ "Mod4" }, "p", function() run_once("lxrandr") end,
---{description = "Monitor Settings", group = "awesome"}),
+
+        --awful.key({ "Mod4" }, "p", function() run_once("lxrandr") end,
+        --{description = "Monitor Settings", group = "awesome"}),
         awful.key({ "Mod4" }, "p", xrandr.xrandr,
                 { description = "Monitor Settings", group = "awesome" })
 )
@@ -461,60 +485,79 @@ clientkeys = gears.table.join(
                     c:raise()
                 end,
                 { description = "toggle fullscreen", group = "client" }),
-        awful.key({ modkey, "Shift" }, "q", function(c)
-            c:kill()
-        end,
+
+        awful.key({ modkey, "Shift" }, "q",
+                function(c)
+                    c:kill()
+                end,
                 { description = "close", group = "client" }),
+
         awful.key({ modkey, "Control" }, "space",
                 function(c)
                     -- placement to center
+                    if not awful.client.floating then
+                        awful.placement.centered(c, nil)
+                    end
                     awful.client.floating.toggle(c)
-                    awful.placement.centered(c, nil)
-                    c.ontop = true
                 end,
                 { description = "toggle floating", group = "client" }),
-        awful.key({ modkey, "Control" }, "Return", function(c)
-            c:swap(awful.client.getmaster())
-        end,
+
+        awful.key({ modkey, "Control" }, "Return",
+                function(c)
+                    c:swap(awful.client.getmaster())
+                end,
                 { description = "move to master", group = "client" }),
-        awful.key({ modkey, }, "o", function(c)
-            c:move_to_screen()
-        end,
+
+        awful.key({ modkey, }, "o",
+                function(c)
+                    c:move_to_screen()
+                end,
                 { description = "move to screen", group = "client" }),
-        awful.key({ modkey, }, "t", function(c)
-            c.ontop = not c.ontop
-        end,
+
+        awful.key({ modkey, }, "t",
+                function(c)
+                    c.ontop = not c.ontop
+                end,
                 { description = "toggle keep on top", group = "client" }),
+
         awful.key({ modkey, }, "n",
                 function(c)
-                    -- The client currently has the input focus, so it cannot be
-                    -- minimized, since minimized clients can't have the focus.
                     c.minimized = true
                 end,
                 { description = "minimize", group = "client" }),
+
         awful.key({ modkey, }, "c",
                 function(c)
                     awful.placement.centered(c, nil)
                 end,
                 { description = "put to center", group = "client" }),
+
         awful.key({ modkey, }, "m",
                 function(c)
                     c.maximized = not c.maximized
                     c:raise()
                 end,
                 { description = "(un)maximize", group = "client" }),
+
         awful.key({ modkey, "Control" }, "m",
                 function(c)
                     c.maximized_vertical = not c.maximized_vertical
                     c:raise()
                 end,
                 { description = "(un)maximize vertically", group = "client" }),
+
         awful.key({ modkey, "Shift" }, "m",
                 function(c)
                     c.maximized_horizontal = not c.maximized_horizontal
                     c:raise()
                 end,
-                { description = "(un)maximize horizontally", group = "client" })
+                { description = "(un)maximize horizontally", group = "client" }),
+
+        awful.key({ modkey }, "q",
+                function(c)
+                    awful.mouse.client.move(c)
+                end,
+                { description = "move", group = "client" })
 )
 
 -- Bind all key numbers to tags.
@@ -568,14 +611,17 @@ for i = 1, 9 do
 end
 
 clientbuttons = gears.table.join(
-        awful.button({ }, 1, function(c)
+        awful.button({ }, 1,
+        function(c)
             c:emit_signal("request::activate", "mouse_click", { raise = true })
         end),
-        awful.button({ "Mod1" }, 1, function(c)
+        awful.button({ "Mod1" }, 1,
+        function(c)
             c:emit_signal("request::activate", "mouse_click", { raise = true })
             awful.mouse.client.move(c)
         end),
-        awful.button({ "Mod1" }, 3, function(c)
+        awful.button({ "Mod1" }, 3,
+        function(c)
             c:emit_signal("request::activate", "mouse_click", { raise = true })
             awful.mouse.client.resize(c)
         end)
@@ -653,7 +699,7 @@ awful.rules.rules = {
     --},
 
     { rule = { class = "Chromium", role = "browser" },
-      properties = { floating = false, tag = " 3", maximized = false },
+      properties = { floating = false, tag = "3", maximized = false },
         -- Set maximized in callback. Avoid appear of border.
       callback = function(c)
           c.ontop = false

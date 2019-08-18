@@ -2,7 +2,6 @@
 ["~/.vimrc", ""],
 ["~/.tmux.conf", ""],
 ["~/.config/plasma-workspace/", ""],
-["~/.aria2/aria2.conf", ""],
 ["~/.Xmodmap", "X/"],
 ["~/.xprofile", "X/"],
 ["~/.config/i3/config", "i3/config"],

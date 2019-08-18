@@ -50,16 +50,6 @@
             "src_grp": "kai"
         },
         {
-            "dst": "out/aria2.conf",
-            "src": "~/.aria2/aria2.conf",
-            "src_expanded": "/home/kai/.aria2/aria2.conf",
-            "src_is_dir": false,
-            "src_dir_stat": null,
-            "src_mode": 33152,
-            "src_own": "kai",
-            "src_grp": "kai"
-        },
-        {
             "dst": "out/X/_Xmodmap",
             "src": "~/.Xmodmap",
             "src_expanded": "/home/kai/.Xmodmap",

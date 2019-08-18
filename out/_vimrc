@@ -154,6 +154,9 @@ func! RunOrCompile()
     elseif &filetype ==# 'cs'
         exec 'w'
         exec '!csc %; mono ./%<.exe'
+    elseif &filetype ==# 'javascript'
+        exec 'w'
+        exec '!node %'
     endif
 endfunc
 
