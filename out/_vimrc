@@ -85,6 +85,14 @@ endfunc
 command! Imlooking call LookingMap()
 command! Imwriting call NonLookingMap()
 
+func! FTMarkDown()
+    set wrap
+    set nolinebreak
+    set showbreak=-
+    nnoremap <buffer> j gj
+    nnoremap <buffer> k gk
+endfunc
+
 func! SaveSpace()
 py3 << EOF
 import vim
@@ -129,34 +137,29 @@ func! LoadLastSpace()
     endif
 endfunc
 
+func! _RunInShell(cmd)
+    exec 'w'
+    exec 'terminal bash -c "' . a:cmd . '"'
+endfunc
+
 " 编译或运行
 func! RunOrCompile()
     if &filetype ==# 'c'
-        exec 'w'
-        exec '!gcc % -o %<'
-        exec '!./%<'
+        call _RunInShell("gcc % -o %< && ./%<")
     elseif &filetype ==# 'cpp'
-        exec 'w'
-        exec '!g++ % -std=c++11 -o %<'
-        exec '!./%<'
+        call _RunInShell("g++ % -std=c++11 -o %< && ./%<")
     elseif &filetype ==# 'python'
-        exec 'w'
-        exec '!python %'
+        call _RunInShell("python %")
     elseif &filetype ==# 'perl'
-        exec 'w'
-        exec '!perl %'
+        call _RunInShell("perl %")
     elseif &filetype ==# 'sh'
-        exec 'w'
-        exec '!bash %'
+        call _RunInShell("bash %")
     elseif &filetype ==# 'go'
-        exec 'w'
-        exec '!go run %'
+        call _RunInShell("go run %")
     elseif &filetype ==# 'cs'
-        exec 'w'
-        exec '!csc %; mono ./%<.exe'
+        call _RunInShell("csc % && mono ./%<.exe")
     elseif &filetype ==# 'javascript'
-        exec 'w'
-        exec '!node %'
+        call _RunInShell("node %")
     endif
 endfunc
 
@@ -195,6 +198,7 @@ packadd! LeaderF
 packadd! easymotion
 packadd! c-syntax.vim
 packadd! python-syntax
+packadd! flake8
 
 if has('unix')
     " windows 太卡了
@@ -333,6 +337,8 @@ inoremap <C-E> <End>
 inoremap <C-F> <Right>
 inoremap <C-B> <Left>
 
+inoremap <C-J> <C-X><C-O>
+
 " unmap unused bind
 inoremap <C-@> <ESC>
 
@@ -387,3 +393,4 @@ if has('gui_running')
     endif
 endif
 
+autocmd FileType markdown call FTMarkDown()

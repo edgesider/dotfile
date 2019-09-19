@@ -31,3 +31,7 @@ function pppex
     echo 'start pppoe-connect...'
     sudo pppoe-connect
 end
+
+function masm
+    dosbox -c 'mount A: /home/kai/Downloads/dos/dosbox/' -c 'path %path%;A:\\masm'   
+end
