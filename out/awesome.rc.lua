@@ -458,12 +458,12 @@ globalkeys = gears.table.join(
                 { description = "show the menubar", group = "launcher" }),
 -- rofi
         awful.key({ modkey }, "d",
-                function(c)
+                function()
                     awful.spawn.with_shell(rofi_cmd)
                 end,
                 { description = "rofi", group = "awesome" }),
         awful.key({ "Mod1" }, "space",
-                function(c)
+                function()
                     awful.spawn.with_shell(rofi_cmd)
                 end,
                 { description = "rofi", group = "awesome" }),
@@ -475,7 +475,14 @@ globalkeys = gears.table.join(
         --awful.key({ "Mod4" }, "p", function() run_once("lxrandr") end,
         --{description = "Monitor Settings", group = "awesome"}),
         awful.key({ "Mod4" }, "p", xrandr.xrandr,
-                { description = "Monitor Settings", group = "awesome" })
+                { description = "Monitor Settings", group = "awesome" }),
+
+-- xfce4-screenshooter
+        awful.key({ modkey, "Shift" }, "x",
+                function ()
+                    awful.spawn.with_shell("xfce4-screenshooter")
+                end,
+                { description = "Xfce4 Screenshooter", group = "awesome" })
 )
 
 clientkeys = gears.table.join(

@@ -1,3 +1,27 @@
+func! TrimRight()
+    try
+        %s/\s\+$//
+        norm! ``
+    catch
+    endtry
+endfunc
+
+func! TabToSpace()
+    let space = " "->repeat(&tabstop)
+    let cmd = "%s/\t/" . space . "/g"
+    try
+        execute cmd
+        norm! ``
+    catch
+    endtry
+endfunc
+command TabToSpace call TabToSpace()
+
+func! MySave()
+    call TrimRight()
+    write
+endfunc
+
 func! SetGui()
     source $VIMRUNTIME/delmenu.vim
     source $VIMRUNTIME/menu.vim
@@ -27,7 +51,7 @@ func! SetGtkGUI()
     set guifontwide=黑体
 endfunc
 
-" 查看模式保持光标在中间
+ " 查看模式保持光标在中间
 func! LookingMap()
     try
         nnoremap <buffer> j jzz
@@ -82,8 +106,8 @@ func! NonLookingMap()
     endtry
     set colorcolumn=100
 endfunc
-command! Imlooking call LookingMap()
-command! Imwriting call NonLookingMap()
+command Imlooking call LookingMap()
+command Imwriting call NonLookingMap()
 
 func! FTMarkDown()
     set wrap
@@ -137,13 +161,43 @@ func! LoadLastSpace()
     endif
 endfunc
 
+func! ClearClosedTerm()
+    " get terminal buffers
+    let termbuf = []
+    for bufid in filter(range(1, bufnr('$')), 'bufexists(v:val) && buflisted(v:val)')
+        if getbufvar(bufid, '&buftype') == 'terminal'
+            call add(termbuf, bufid)
+            "let cmd = cmd . string(bufid) . ","
+        endif
+    endfor
+
+    " get finished term
+    let termfin = []
+    for bufid in termbuf
+        let info = getbufvar(bufid, 'F5RUN')
+        if term_getstatus(bufid) == "finished" && len(info) != 0
+            call add(termfin, bufid)
+        endif
+    endfor
+
+    for bufid in termfin
+        let cmd = string(bufid) . "bd"
+        execute cmd
+    endfor
+endfunc
+
 func! _RunInShell(cmd)
+    let cmd = expandcmd(a:cmd)
     exec 'w'
-    exec 'terminal bash -c "' . a:cmd . '"'
+    let info = {'bind_buf': buffer_number()}
+    let bufid = term_start(['bash', '-c', cmd], {'term_name': "F5: " . cmd})
+    call setbufvar(bufid, 'F5RUN', info)
+    "call setbufvar(bufid, '&bufhidden', 'hide')
 endfunc
 
 " 编译或运行
 func! RunOrCompile()
+    call ClearClosedTerm()
     if &filetype ==# 'c'
         call _RunInShell("gcc % -o %< && ./%<")
     elseif &filetype ==# 'cpp'
@@ -161,6 +215,22 @@ func! RunOrCompile()
     elseif &filetype ==# 'javascript'
         call _RunInShell("node %")
     endif
+endfunc
+
+func! IsF5RunBuf(bid)
+    let info = getbufvar(a:bid, 'F5RUN')
+    return len(info) != 0
+endfunc
+
+func! RunOrCompileInTermbuf()
+    let bufid = buffer_number()
+    if !IsF5RunBuf(bufid) | return | endif
+    let info = getbufvar(bufid, 'F5RUN')
+    let bind_buf = get(info, 'bind_buf')
+    let bind_win = win_findbuf(bind_buf)
+    if len(bind_win) == 0 | echom "no bind source" | return | endif
+    call win_gotoid(bind_win[0])
+    call RunOrCompile()
 endfunc
 
 func! GenDoc()
@@ -278,8 +348,9 @@ nnoremap <silent> <leader>t :Tagbar<CR>
 nnoremap <silent> <leader>t :LeaderfBufTag<CR>
 nnoremap <silent> <leader>m :LeaderfMru<CR>
 
-nnoremap <C-S> :w<CR>
+nnoremap <C-S> :call MySave()<CR>
 nnoremap <silent> <F5> :call RunOrCompile()<CR>
+tnoremap <silent> <C-W><F5> <C-W>:call RunOrCompileInTermbuf()<CR>
 
 " 窗口切换
 nnoremap <C-J> <C-W><C-J>
@@ -339,6 +410,8 @@ inoremap <C-B> <Left>
 
 inoremap <C-J> <C-X><C-O>
 
+nnoremap <silent> <S-F4> :call ClearClosedTerm()<cr>
+
 " unmap unused bind
 inoremap <C-@> <ESC>
 
@@ -394,3 +467,4 @@ if has('gui_running')
 endif
 
 autocmd FileType markdown call FTMarkDown()
+autocmd FileType asm :set filetype=nasm
